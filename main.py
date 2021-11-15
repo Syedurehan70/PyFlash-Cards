@@ -8,6 +8,7 @@ known_word_list = []
 
 # --------------------------Flip The Card------------------------------------------
 def flipping():
+    # will show th back image on canvas, english on title and english word in place of words
     canvas.itemconfig(canvas_image, image=back_img)
     canvas.itemconfig(card_title, text="English", fill="white")
     canvas.itemconfig(card_word, text=ran_word_dict["English"], fill="white")
@@ -33,13 +34,19 @@ def known_words():
 
 def unknown_words():
     global ran_word_dict, stop
+
     # it's going stop the previous sec count, so it can run from the start in every round
     window.after_cancel(stop)
+
     if len(word_dict_list) != 0:
         ran_word_dict = random.choice(word_dict_list)
+
+        # first showing French in place of title and french word in place of words
         canvas.itemconfig(card_title, text="French", fill="black")
         canvas.itemconfig(card_word, text=ran_word_dict["French"], fill="black")
         canvas.itemconfig(canvas_image, image=front_img)
+
+        # executing flip func after 3 secs
         stop = window.after(3000, flipping)
     else:
         canvas.itemconfig(card_title, text="Well Done", fill="black")
@@ -47,6 +54,7 @@ def unknown_words():
         canvas.itemconfig(canvas_image, image=front_img)
 
 
+# trying to read a file, if words_to_learn is not found read french_words
 try:
     data = pandas.read_csv("data/words_to_learn.csv")
 except FileNotFoundError:
@@ -61,16 +69,24 @@ window = Tk()
 window.title("Flash Cards")
 window.config(padx=50, pady=50, bg=BACKGROUND_COLOR)
 
-# only created a variable
+# only created a variable, for making a delay
 stop = window.after(3000, flipping)
 
 # Canvas setup
 canvas = Canvas(width=800, height=526, highlightthickness=0, bg=BACKGROUND_COLOR)
+
+# creating image objects for both images
 front_img = PhotoImage(file="./images/card_front.png")
 back_img = PhotoImage(file="images/card_back.png")
+
+# putting image on canvas
 canvas_image = canvas.create_image(400, 263, image=front_img)
+
+# creating empty canvas text and positioning it
 card_title = canvas.create_text(400, 100, text="", font=("Arial", 30, "italic"))
 card_word = canvas.create_text(400, 250, text="", font=("Arial", 50, "bold"))
+
+# placing the whole canvas
 canvas.grid(row=0, column=0, columnspan=3)
 
 # Buttons
